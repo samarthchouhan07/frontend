@@ -8,30 +8,37 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useAuth } from "@clerk/nextjs";
 
 const courseSchema = z.object({
-  name: z.string().min(3, "Course name must be at least 3 characters"),
+  title: z.string().min(3, "Course name must be at least 3 characters"),
 });
 
 export default function CreatePage() {
   const router = useRouter();
+  const {userId}=useAuth()
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<{
-    name:string
+    title:string
   }>({
     resolver: zodResolver(courseSchema),
   });
 
-  const onSubmit = async (data: { name: string }) => {
+  const onSubmit = async (data: { title: string }) => {
     try {
+      console.log("data",data)
       const response = await axios.post(
-        "http://localhost:3000/api/course",
-        data
+        "http://localhost:5000/api/courses",
+        {
+          title:data.title,
+          userId:userId
+        }
       );
+      console.log("response",response)
       toast.success("Course Creation successful");
       router.push(`/teacher/courses/${response.data.id}`);
     } catch (error) {
@@ -47,9 +54,9 @@ export default function CreatePage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium">Course name</label>
-              <Input type="text" {...register("name")} />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              <Input type="text" {...register("title")} />
+              {errors.title && (
+                <p className="text-red-500 text-sm">{errors.title.message}</p>
               )}
             </div>
             <div className="flex justify-between">
