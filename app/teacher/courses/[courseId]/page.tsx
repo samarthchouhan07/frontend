@@ -1,16 +1,15 @@
 "use client";
+import { TitleForm } from "@/components/courses/title-form";
 import { Header } from "@/components/header";
 import { Progress } from "@/components/ui/progress";
 import { Settings } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
-export default function CoursesIdPage({
-  params,
-}: {
-  params: {
-    courseId: string;
-  };
-}) {
+export default function CoursesIdPage() {
+  const params = useParams();
+  const courseId = params?.courseId as string;
+
   const [filledFields, setFilledFields] = useState(0);
   const totalFields = 5;
   return (
@@ -30,6 +29,7 @@ export default function CoursesIdPage({
             <Settings className="w-6 h-6 text-blue=500" />
             <p className="text-lg font-medium">Customize your course</p>
           </div>
+          <TitleForm courseId={courseId} />
         </main>
       </div>
     </div>
